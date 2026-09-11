@@ -356,3 +356,21 @@ Possible future enhancements include:
 
 ---
 
+## 📌 Portfolio Implementation
+
+Built to demonstrate practical integration of voice AI, webhooks, Google Apps Script, and spreadsheet-based backend automation.
+
+A sanitized n8n workflow file is included for portfolio demonstration.
+
+👉 [View / Download App Script Code](Code.gs)
+
+For custom implementation or commercial use, please <strong>Contact Us:</strong>
+<a href="https://wa.me/923002120566"><img src="https://raw.githubusercontent.com/bluemoonways/bluemoonways/main/assets/whatsapp-logo.png" width="30" alt="WhatsApp" style="position: relative; top: 2px;"></a>   <a href="https://www.linkedin.com/in/faheem-abbas-ai-automation-specialist/"><img src="https://raw.githubusercontent.com/bluemoonways/bluemoonways/main/assets/linkedin-logo.png" width="30" alt="LinkedIn" style="position: relative; top: 2px;"></a>
+
+## 👨‍💻 Author
+
+**Faheem Abbas**
+
+AI Automation Specialist | n8n Expert | AI Agents | AI-Powered Business Automation | Lead Generation | API Integrations | Calling Agents
+
+**#AI #AIAutomation #n8n #RAG #GoogleGemini #Pinecone #WhatsAppAutomation #LLM #AIEngineering #Automation #bluemoonways**
