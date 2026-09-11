@@ -1,10 +1,44 @@
 # WhatsApp Expense Management System
 
-A WhatsApp-based expense management and tracking system built with **n8n, Google Sheets, Google Apps Script, and a responsive web dashboard**.
+## 🌍 Real-World Project
 
-The system allows users to record expenses directly through WhatsApp, automatically split expenses between multiple people, record payments, manage settlements, and delete transactions using a unique Transaction ID.
+This system was built as a **real-world expense management solution for the Audit Department of Dawat-e-Islami**.
+
+The audit teams regularly travel to different cities to perform audit activities. During these visits, team members incur different types of expenses, including **travel, food, and other operational expenses**.
+
+Previously, these expenses were maintained manually in Excel, which made it difficult to manage entries efficiently and generate separate person-wise expense reports.
+
+To solve this problem, I developed this **AI-powered WhatsApp Expense Management System**.
+
+Instead of manually maintaining Excel records, audit team members can now simply send their expense information through **WhatsApp**. The n8n automation workflow processes the message using AI, identifies the expense details, splits shared expenses between team members, records payments, and stores the data in Google Sheets.
+
+The system also provides a **person-wise web dashboard**, allowing the team to view expenses, payments, balances, recent transactions, and category-wise spending.
+
+This project demonstrates how **AI and workflow automation can be applied to solve a real operational problem and replace a manual spreadsheet-based process with a structured, automated system.**
 
 ---
+
+## 🎯 Problem Statement
+
+Audit teams travelling to different cities needed to maintain their daily travel-related expenses manually in Excel.
+
+The manual process created several challenges:
+
+- Manual data entry
+- Time-consuming expense recording
+- Difficulty managing shared expenses
+- Difficulty tracking who paid for an expense
+- Manual calculation of individual balances
+- Difficulty generating person-wise reports
+- Risk of duplicate or incorrect entries
+- Manual deletion or correction of transactions
+
+---
+
+## 💡 Solution
+
+The WhatsApp Expense Management System provides a simple alternative:
+
 
 ## 🚀 Features
 
