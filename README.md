@@ -377,7 +377,7 @@ The project reflects how modern automation can be applied to improve an existing
 
 ### 📄 Project Documentation
 
-[📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.docx)
+[📥 Download System Documentation](WhatsApp_Expense_Management_System_Documentation.pdf)
 
 ### ⚙️ n8n Workflow
 
