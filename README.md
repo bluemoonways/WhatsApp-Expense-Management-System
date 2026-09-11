@@ -292,16 +292,6 @@ These functions allow the dashboard to:
 
 ---
 
-## 📖 Documentation
-
-Detailed system documentation is available in:
-
-```text
-documentation/SYSTEM-DOCUMENTATION.md
-```
-
-It explains the complete workflow, data structure, transaction processing, dashboard functionality, and deletion system.
-
 ---
 ## 🛠️ Technologies Used
 
@@ -355,25 +345,18 @@ Possible future enhancements include:
 * Backup and recovery functionality
 
 ---
-## 📖 Documentation
 
-Detailed system documentation is available in:
+## 🧩 Portfolio Implementation
 
-## 📖 Documentation
+Built as a practical automation project that integrates **WhatsApp, n8n, AI-powered message processing, Google Sheets, Google Apps Script, and a responsive web dashboard** into a complete expense management system.
 
-[📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.docx)
+The system enables users to record expenses and payments through WhatsApp, automatically split shared expenses, manage settlements, track balances, view transaction summaries, and delete complete transactions using a unique Transaction ID.
 
-It explains the complete workflow, data structure, transaction processing, dashboard functionality, and deletion system.
-
----
-
-## 📌 Portfolio Implementation
-
-Built to demonstrate practical integration of voice AI, webhooks, Google Apps Script, and spreadsheet-based backend automation.
-
-A sanitized n8n workflow file is included for portfolio demonstration.
+A sanitized n8n workflow and supporting project files are included for portfolio demonstration.
 
 👉 [View / Download Workflow](WhatsApp_Expense_Tracker_Final.json)
+
+[📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.docx)
 
 For custom implementation or commercial use, please <strong>Contact Us:</strong>
 <a href="https://wa.me/923002120566"><img src="https://raw.githubusercontent.com/bluemoonways/bluemoonways/main/assets/whatsapp-logo.png" width="30" alt="WhatsApp" style="position: relative; top: 2px;"></a>   <a href="https://www.linkedin.com/in/faheem-abbas-ai-automation-specialist/"><img src="https://raw.githubusercontent.com/bluemoonways/bluemoonways/main/assets/linkedin-logo.png" width="30" alt="LinkedIn" style="position: relative; top: 2px;"></a>
