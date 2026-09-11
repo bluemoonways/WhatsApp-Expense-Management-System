@@ -14,9 +14,7 @@ Instead of manually maintaining Excel records, audit team members can now simply
 
 The system also provides a **person-wise web dashboard**, allowing the team to view expenses, payments, balances, recent transactions, and category-wise spending.
 
-This project demonstrates how **AI and workflow automation can be applied to solve a real operational problem and replace a manual spreadsheet-based process with a structured, automated system.**
-
----
+This project demonstrates how **AI and workflow automation can be applied to solve a real operational problem and replace a manual spreadsheet-based process with a structured, automated system**.
 
 ## 🎯 Problem Statement
 
@@ -33,40 +31,53 @@ The manual process created several challenges:
 - Risk of duplicate or incorrect entries
 - Manual deletion or correction of transactions
 
----
-
 ## 💡 Solution
 
-The WhatsApp Expense Management System provides a simple alternative:
+The WhatsApp Expense Management System provides a simple alternative to the manual Excel-based process.
 
+```text
+Manual Excel Entry
+        ↓
+WhatsApp Expense Message
+        ↓
+AI Processing
+        ↓
+n8n Automation
+        ↓
+Expense Splitting & Transaction ID
+        ↓
+Google Sheets
+        ↓
+Person-Wise Reporting
+        ↓
+Web Dashboard
+```
 
 ## 🚀 Features
 
-* Record expenses through WhatsApp
-* Automatically identify expense category
-* Support multiple people in a single expense
-* Automatically split expenses into separate rows
-* Generate a unique Transaction ID for each transaction
-* Record payment information
-* Support balance settlement
-* Delete complete transactions using Transaction ID
-* Delete multiple expense rows belonging to the same transaction
-* Web-based expense dashboard
-* View expenses by person
-* View all expenses
-* Calculate total expenses
-* Calculate total payments
-* Calculate net balance
-* View category-wise expense breakdown
-* View recent transactions
-* Mobile-friendly dashboard
-* Google Sheets used as the data storage layer
+- Record expenses through WhatsApp
+- Automatically identify expense category
+- Support multiple people in a single expense
+- Automatically split expenses into separate rows
+- Generate a unique Transaction ID for each transaction
+- Record payment information
+- Support balance settlement
+- Delete complete transactions using Transaction ID
+- Delete multiple expense rows belonging to the same transaction
+- Web-based expense dashboard
+- View expenses by person
+- View all expenses
+- Calculate total expenses
+- Calculate total payments
+- Calculate net balance
+- View category-wise expense breakdown
+- View recent transactions
+- Mobile-friendly dashboard
+- Google Sheets used as the data storage layer
 
-  
 ## 🔄 System Flow Diagram
 
 ![WhatsApp Expense Management System Flow Diagram](screenshots/Flowchart.png)
-
 
 ## 📊 Google Sheets Structure
 
@@ -132,8 +143,6 @@ The related payment record can also use the same Transaction ID.
 
 This makes it possible to identify and manage the complete transaction as one unit.
 
----
-
 ## 💰 Expense Splitting
 
 When a shared expense is received through WhatsApp, the n8n workflow processes the message and creates separate expense records for each person.
@@ -152,23 +161,19 @@ All three rows are associated with the same Transaction ID.
 
 This structure allows the dashboard to calculate individual balances correctly.
 
----
-
 ## 💳 Payments
 
 When an expense is recorded, the workflow can also create the related payment record.
 
 The payment identifies:
 
-* Who paid
-* Total amount paid
-* Transaction ID
-* Date
-* Description
+- Who paid
+- Total amount paid
+- Transaction ID
+- Date
+- Description
 
 The same Transaction ID connects the payment with its related expense records.
-
----
 
 ## 🤝 Settlement
 
@@ -186,8 +191,6 @@ Settlement
 are interpreted as settlement transactions.
 
 A settlement records the payment information and marks the balance as cleared without creating normal expense split rows.
-
----
 
 ## 🗑️ Delete Transactions
 
@@ -216,8 +219,6 @@ A single Transaction ID may belong to more than one expense row.
 The workflow therefore identifies **all matching expense rows** before deletion.
 
 Expense rows are processed from the bottom upward to prevent row-number shifting during deletion.
-
----
 
 ## 📱 Web Dashboard
 
@@ -252,18 +253,16 @@ Records
 
 Recent expense records display information such as:
 
-* Category
-* Detail
-* Transaction ID
-* Date
-* Person
-* Amount
+- Category
+- Detail
+- Transaction ID
+- Date
+- Person
+- Amount
 
 ### Category Breakdown
 
 Expenses are grouped by category to provide a quick overview of spending.
-
----
 
 ## ⚖️ Balance Calculation
 
@@ -276,8 +275,6 @@ Net Balance = Total Paid - Total Expense
 A positive balance indicates that payments are greater than recorded expenses.
 
 A negative balance indicates that recorded expenses are greater than payments.
-
----
 
 ## 🔄 Transaction Flow
 
@@ -303,8 +300,6 @@ WhatsApp Confirmation
 
 The dashboard then reads the stored data through Google Apps Script.
 
----
-
 ## 🔧 Google Apps Script
 
 The Apps Script backend provides functions for the dashboard, including:
@@ -317,84 +312,87 @@ deleteTransactionPublic()
 
 These functions allow the dashboard to:
 
-* Retrieve expense data
-* Retrieve payment data
-* Generate the person list
-* Calculate totals
-* Calculate balances
-* Delete transactions
+- Retrieve expense data
+- Retrieve payment data
+- Generate the person list
+- Calculate totals
+- Calculate balances
+- Delete transactions
 
----
 ## 🛠️ Technologies Used
 
-| Technology              | Purpose                                          |
-| ----------------------- | ------------------------------------------------ |
-| WhatsApp                | User interaction                                 |
-| n8n                     | Workflow automation                              |
-| AI Model                | Message understanding and expense classification |
-| Google Sheets           | Expense and payment database                     |
-| Google Apps Script      | Backend/API for dashboard                        |
-| HTML / CSS / JavaScript | Web dashboard                                    |
-| GitHub                  | Source code and project version control          |
+| Technology | Purpose |
+|---|---|
+| WhatsApp | User interaction |
+| n8n | Workflow automation |
+| AI Model | Message understanding and expense classification |
+| Google Sheets | Expense and payment database |
+| Google Apps Script | Backend/API for dashboard |
+| HTML / CSS / JavaScript | Web dashboard |
+| GitHub | Source code and project version control |
 
----
 ## 🎯 Current System Capabilities
 
 The system currently provides:
 
-* WhatsApp expense entry
-* AI-based expense processing
-* Expense categorization
-* Multi-person expense splitting
-* Payment recording
-* Settlement handling
-* Transaction ID generation
-* Transaction-based deletion
-* Multi-row expense deletion
-* Google Sheets storage
-* Google Apps Script backend
-* Responsive expense dashboard
-* Person-based filtering
-* Expense summaries
-* Category breakdown
-  
+- WhatsApp expense entry
+- AI-based expense processing
+- Expense categorization
+- Multi-person expense splitting
+- Payment recording
+- Settlement handling
+- Transaction ID generation
+- Transaction-based deletion
+- Multi-row expense deletion
+- Google Sheets storage
+- Google Apps Script backend
+- Responsive expense dashboard
+- Person-based filtering
+- Expense summaries
+- Category breakdown
+
 ## 🔮 Future Improvements
 
 Possible future enhancements include:
 
-* Edit transactions by Transaction ID
-* Advanced reporting
-* Monthly expense reports
-* Charts and visual analytics
-* Export reports
-* Authentication for the dashboard
-* User-specific access control
-* Automated monthly summaries
-* Improved transaction search
-* Audit logs
-* Backup and recovery functionality
-
----
+- Edit transactions by Transaction ID
+- Advanced reporting
+- Monthly expense reports
+- Charts and visual analytics
+- Export reports
+- Authentication for the dashboard
+- User-specific access control
+- Automated monthly summaries
+- Improved transaction search
+- Audit logs
+- Backup and recovery functionality
 
 ## 🧩 Portfolio Implementation
 
-Built as a practical automation project that integrates **WhatsApp, n8n, AI-powered message processing, Google Sheets, Google Apps Script, and a responsive web dashboard** into a complete expense management system.
+This project was developed as a **real-world automation solution for an audit team**, transforming a manual Excel-based expense recording process into an AI-powered WhatsApp workflow.
 
-The system enables users to record expenses and payments through WhatsApp, automatically split shared expenses, manage settlements, track balances, view transaction summaries, and delete complete transactions using a unique Transaction ID.
+It demonstrates practical implementation of **AI message processing, workflow automation, expense splitting, transaction management, Google Sheets data storage, Google Apps Script backend services, and person-wise web reporting**.
 
-A sanitized n8n workflow and supporting project files are included for portfolio demonstration.
+The project reflects how modern automation can be applied to improve an existing operational process rather than being developed only as a theoretical or demo application.
 
-👉 [View / Download Workflow](WhatsApp_Expense_Tracker_Final.json)
+### 📄 Project Documentation
 
 [📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.docx)
 
-For custom implementation or commercial use, please <strong>Contact Us:</strong>
-<a href="https://wa.me/923002120566"><img src="https://raw.githubusercontent.com/bluemoonways/bluemoonways/main/assets/whatsapp-logo.png" width="30" alt="WhatsApp" style="position: relative; top: 2px;"></a>   <a href="https://www.linkedin.com/in/faheem-abbas-ai-automation-specialist/"><img src="https://raw.githubusercontent.com/bluemoonways/bluemoonways/main/assets/linkedin-logo.png" width="30" alt="LinkedIn" style="position: relative; top: 2px;"></a>
+### ⚙️ n8n Workflow
+
+[View / Download Workflow](./WhatsApp_Expense_Tracker_Final.json)
 
 ## 👨‍💻 Author
 
 **Faheem Abbas**
 
 AI Automation Specialist | n8n Expert | AI Agents | AI-Powered Business Automation | Lead Generation | API Integrations | Calling Agents
+
+## 📞 Contact
+
+For custom implementation or commercial use:
+
+[WhatsApp](https://wa.me/923002120566) | [LinkedIn](https://www.linkedin.com/in/faheem-abbas-ai-automation-specialist/)
 
 **#AI #AIAutomation #n8n #RAG #GoogleGemini #Pinecone #WhatsAppAutomation #LLM #AIEngineering #Automation #bluemoonways**
