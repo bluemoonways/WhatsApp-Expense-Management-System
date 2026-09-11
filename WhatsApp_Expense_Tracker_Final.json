@@ -1,0 +1,1039 @@
+{
+  "name": "WhatsApp Expense Tracker Final 1",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "id": "3dd39265-9d75-4d54-a016-70307358771c",
+      "name": "WhatsApp Trigger",
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2768,
+        608
+      ],
+      "webhookId": "REPLACE_WITH_YOUR_WEBHOOK_ID",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "ExgybgeQM7AMx9Dc",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "==You are an expense-message parser. Extract data and return ONLY valid JSON (no extra text, no markdown fences) in this exact format:\n{\"category\": \"string\", \"detail\": \"string\", \"date\": \"YYYY-MM-DD or null\", \"total\": number, \"paid_by\": \"string\", \"splits\": [{\"person\": \"string\", \"amount\": number}], \"isSettlement\": true/false}\n\nCATEGORY RULES (very important):\n- \"food\" = anything eaten, drunk, or small consumables:\n  lunch, dinner, breakfast, chai, tea, coffee, cold drink, coldrink, juice, water, snacks, pizza, burger, biryani, restaurant, hotel meal, groceries,\n  toffee, tofy, candy, chocolate, choclate, biscuit, biscuits, cigarette, sigrat, sigaret, chips, namkeen, paan, gutka.\n- \"travel\" = petrol, fuel, taxi, bus, train, ticket, hotel stay (only lodging), city-to-city travel.\n- \"other\" = ONLY if it clearly does NOT fit food, travel,(e.g. furniture, bill, medicine, repair).\n- Never put drinks, cold drink, chai, snacks, toffee, candy, chocolate, biscuit, cigarette/sigrat in \"other\". They are always \"food\".\n- category must be lowercase single word: food, travel, other (or \"settlement\" — see SETTLEMENT rules below).\n\nPERSON NAME RULES (VERY IMPORTANT):\n- Person names must be normalized to the exact canonical spelling below.\n- Matching is case-insensitive and ignores leading/trailing spaces and repeated spaces.\n- If the user writes \"faheem\", \"FAHEEM\", \"Faheem \" or \" fAhEeM \", always output \"Faheem\".\n- Use these exact canonical names whenever they match:\n  Faheem\n  Amir\n  Hussain\n  Shehzad\n  Umair\n  Abdul Rahim\n  Sakhawat\n  Shahid\n  Farhat\n  Khuram\n  Salman\n  Waheed\n  Asif\n  Majid\n  Ghulam Mustafa\n  Ahmad\n  ShehzadMultan\n  Bilal\n  Fateh\n  Babar\n  Wajahat\n  Mohsin\n- Do NOT create separate names because of capitalization or trailing spaces.\n- If a person name is not in the canonical list, normalize it to Title Case: first letter uppercase and the remaining letters lowercase for each word.\n- Preserve \"ShehzadMultan\" exactly when that person is intended.\n- Apply the same normalization to both \"person\" in every split and \"paid_by\".\n\nSETTLEMENT / BALANCE-CLEAR DETECTION (VERY IMPORTANT):\n- If the message is about clearing/settling a previous balance rather than a new expense — for example it contains phrases like \"balance cleared\", \"balance clear\", \"cleared balance\", \"clear balance\", \"balance settled\", \"settlement\", \"settled\", \"balance paid\", \"paid balance\" (any capitalization, any word order, and close variants of these phrases) — then:\n  - Set \"isSettlement\": true\n  - Set \"splits\": [] (empty array — no expense should be recorded)\n  - \"category\": \"settlement\"\n  - \"detail\": \"Balance Cleared\"\n  - \"paid_by\": the person clearing the balance\n  - \"total\": the amount mentioned\n- For all normal expense messages, set \"isSettlement\": false and follow the existing rules above.\n- Always include \"isSettlement\" in the output JSON.\n\nOTHER RULES:\n- detail: short description (e.g. \"cold drink\", \"toffee\", \"sigrat\", \"lunch\"). For settlements always use \"Balance Cleared\".\n- date parsing:\n  * Today's date is: {{ $now.format('YYYY-MM-DD') }}\n  * \"yesterday\" or \"kal\" → 1 day before today.\n  * \"parso\" → 2 days before today.\n  * \"5 sep\", \"5 Sep ko\", \"5th september\" → YYYY-MM-DD (year {{ $now.format('YYYY') }} if year not given).\n  * explicit date like 2026-09-05 → use as-is.\n  * if NO date mentioned → \"date\": null.\n- if total not stated, sum all split amounts.\n- paid_by: who paid upfront. If missing, first person in splits.\n- amounts numbers only."
+            },
+            {
+              "content": "={{ $json.messages[0].text.body }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        -2288,
+        624
+      ],
+      "id": "0b4e3614-f373-40c6-a651-d6c4357d5808",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nlet content;\n\nif (raw.output && Array.isArray(raw.output) && raw.output[0] && raw.output[0].content) {\n  const c = raw.output[0].content;\n  content = Array.isArray(c) ? (c[0].text || c[0].content) : c;\n}\n\nif (!content) {\n  content =\n    raw.text ||\n    raw.content ||\n    (raw.message && raw.message.content) ||\n    (raw.choices &&\n      raw.choices[0] &&\n      raw.choices[0].message &&\n      raw.choices[0].message.content);\n}\n\nif (Array.isArray(content)) {\n  content =\n    (content[0] && (content[0].text || content[0].content)) ||\n    JSON.stringify(content);\n}\n\ncontent = (content || '')\n  .toString()\n  .replace(/```json|```/g, '')\n  .trim();\n\nif (!content) {\n  throw new Error('AI node se koi text nahi mila.');\n}\n\nconst parsed = JSON.parse(content);\n\nconst today = new Date().toISOString().split('T')[0];\n\n\n// ========================================\n// WHATSAPP SENDER NUMBER\n// ========================================\n\nconst senderNumber =\n  $('WhatsApp Trigger').item.json.messages[0].from;\n\n\n// ========================================\n// TRANSACTION ID\n// ONE MESSAGE = ONE ID\n// EXPENSE + PAYMENT = SAME ID\n// ========================================\n\nfunction generateTransactionId() {\n  const datePart = today.replace(/-/g, '').substring(2);\n\n  const randomPart = Math.random()\n    .toString(36)\n    .substring(2, 6)\n    .toUpperCase();\n\n  return `TXN-${datePart}-${randomPart}`;\n}\n\nconst transactionId = generateTransactionId();\n\n\n// ========================================\n// CANONICAL PERSON NAMES\n// ========================================\n\nconst canonicalNames = {\n  \"faheem\": \"Faheem\",\n  \"amir\": \"Amir\",\n  \"hussain\": \"Hussain\",\n  \"shehzad\": \"Shehzad\",\n  \"umair\": \"Umair\",\n  \"abdul rahim\": \"Abdul Rahim\",\n  \"sakhawat\": \"Sakhawat\",\n  \"shahid\": \"Shahid\",\n  \"farhat\": \"Farhat\",\n  \"khuram\": \"Khuram\",\n  \"salman\": \"Salman\",\n  \"waheed\": \"Waheed\",\n  \"asif\": \"Asif\",\n  \"majid\": \"Majid\",\n  \"ghulam mustafa\": \"Ghulam Mustafa\",\n  \"ahmad\": \"Ahmad\",\n  \"shehzadmultan\": \"ShehzadMultan\",\n  \"bilal\": \"Bilal\",\n  \"fateh\": \"Fateh\",\n  \"babar\": \"Babar\",\n  \"wajahat\": \"Wajahat\",\n  \"mohsin\": \"Mohsin\"\n};\n\n\nfunction normalizePersonName(value) {\n\n  let name = String(value ?? '')\n    .trim()\n    .replace(/\\s+/g, ' ');\n\n  if (!name) return '';\n\n  const key = name.toLowerCase();\n\n  if (canonicalNames[key]) {\n    return canonicalNames[key];\n  }\n\n  return name\n    .toLowerCase()\n    .split(' ')\n    .filter(Boolean)\n    .map(word =>\n      word.charAt(0).toUpperCase() + word.slice(1)\n    )\n    .join(' ');\n}\n\n\n// ========================================\n// DATE\n// ========================================\n\nlet recordDate = today;\n\nif (\n  parsed.date &&\n  typeof parsed.date === 'string' &&\n  parsed.date.toLowerCase() !== 'null' &&\n  parsed.date.trim() !== ''\n) {\n  recordDate = parsed.date.trim();\n}\n\n\n// ========================================\n// OUTPUT\n// ========================================\n\nconst output = [];\n\n\n// ========================================\n// SETTLEMENT DETECTION\n// ========================================\n\nconst isSettlement =\n  parsed.isSettlement === true ||\n  !Array.isArray(parsed.splits) ||\n  parsed.splits.length === 0;\n\n\n// ========================================\n// EXPENSE ROWS\n// ========================================\n\nif (!isSettlement) {\n\n  for (const s of parsed.splits || []) {\n\n    const normalizedPerson =\n      normalizePersonName(s.person);\n\n    output.push({\n      json: {\n\n        // SAME TRANSACTION ID\n        id: transactionId,\n\n        recordType: 'expense',\n\n        date: recordDate,\n\n        category: parsed.category,\n\n        person: normalizedPerson,\n\n        amount: Number(s.amount) || 0,\n\n        detail: parsed.detail || '',\n\n        senderNumber: senderNumber\n\n      }\n    });\n\n  }\n}\n\n\n// ========================================\n// PAYMENT ROW\n// ========================================\n\noutput.push({\n  json: {\n\n    // SAME TRANSACTION ID\n    id: transactionId,\n\n    recordType: 'payment',\n\n    date: recordDate,\n\n    category: isSettlement\n      ? 'settlement'\n      : parsed.category,\n\n    paidBy:\n      normalizePersonName(parsed.paid_by),\n\n    totalAmount:\n      Number(parsed.total) || 0,\n\n    detail:\n      isSettlement\n        ? 'Balance Cleared'\n        : (parsed.detail || ''),\n\n    senderNumber: senderNumber\n\n  }\n});\n\n\nreturn output;"
+      },
+      "id": "1f470a50-6a99-4bcc-ab8c-39344489f375",
+      "name": "Split Into Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1936,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.recordType }}",
+                    "rightValue": "expense",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "1658f3ee-0e96-4e41-ba65-8185d9e39e0e"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5c6c78f3-c68f-4c6a-878e-b516c920bd8c",
+                    "leftValue": "={{ $json.recordType }}",
+                    "rightValue": "payment",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1712,
+        624
+      ],
+      "id": "67901692-ee59-4672-aef5-5675f6896905",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Expenses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json.date }}",
+            "Category": "={{ $json.category }}",
+            "Person": "={{ $json.person }}",
+            "Amount": "={{ $json.amount }}",
+            "Detail": "={{ $json.detail }}",
+            "Sender Number": "={{ $json.senderNumber }}",
+            "ID": "={{$json.id}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Person",
+              "displayName": "Person",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Detail",
+              "displayName": "Detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sender Number",
+              "displayName": "Sender Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "e172e071-ffac-4029-8f72-e6a4957d071b",
+      "name": "Log Expense to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1504,
+        528
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T6cRdFQeRI4Q89ak",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 83085190,
+          "mode": "list",
+          "cachedResultName": "Payments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit#gid=83085190"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json.date }}",
+            "Category": "={{ $json.category }}",
+            "Paid By": "={{ $json.paidBy }}",
+            "Total Amount": "={{ $json.totalAmount }}",
+            "Description": "={{ $json.detail }}",
+            "Sender Number": "={{ $json.senderNumber }}",
+            "ID": "={{$json.id}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Paid By",
+              "displayName": "Paid By",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Total Amount",
+              "displayName": "Total Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sender Number",
+              "displayName": "Sender Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1504,
+        784
+      ],
+      "id": "3a2c4936-af79-485f-b9c5-b5f97c154364",
+      "name": "Log Payment to Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T6cRdFQeRI4Q89ak",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1226129117243724",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "textBody": "=={{\n  (() => {\n    try {\n      const rawText = $('Message a model').item.json.output[0].content[0].text\n        .replace(/```json|```/g, '')\n        .trim();\n\n      const data = JSON.parse(rawText);\n\n      // Get Transaction ID generated for this message\n      const transactionId = $('Split Into Rows').first().json.id;\n\n      // ================================\n      // BALANCE CLEARED / SETTLEMENT\n      // ================================\n      if (data.isSettlement) {\n        return `✅ *Balance Cleared!*\n\n🆔 *Transaction ID:* ${transactionId}\n\n📅 *Date:* ${data.date || 'Today'}\n💰 *Amount:* ${data.total}\n💳 *Paid By:* ${data.paid_by}\n\nYe payment sirf *Payments* sheet mein record hui hai — koi expense book nahi hui.`;\n      }\n\n      // ================================\n      // NORMAL EXPENSE\n      // ================================\n      const splitsText = data.splits\n        .map(s => `• *${s.person}:* ${s.amount}`)\n        .join('\\n');\n\n      return `✅ *Expense Recorded!*\n\n🆔 *Transaction ID:* ${transactionId}\n\n📅 *Date:* ${data.date || 'Today'}\n🏷️ *Category:* ${data.category}${data.detail ? ' (' + data.detail + ')' : ''}\n💰 *Total:* ${data.total}\n💳 *Paid By:* ${data.paid_by}\n\n👥 *Split Details:*\n${splitsText}`;\n\n    } catch (e) {\n      return '✅ Entry recorded successfully!';\n    }\n  })()\n}}",
+        "additionalFields": {}
+      },
+      "id": "f050e96d-0735-4a10-886a-797c6e06949b",
+      "name": "Send Confirmation",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        640
+      ],
+      "webhookId": "086d3aff-5adb-44eb-b6e6-dddcc6e57e2c",
+      "executeOnce": true,
+      "credentials": {
+        "whatsAppApi": {
+          "id": "ZcDEsu9RZvqKeqaH",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1280,
+        640
+      ],
+      "id": "4b9f872d-bfe9-4e94-8621-aaa150a78d9e",
+      "name": "Merge",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "e6fd7bae-93cf-441c-a56e-82004bd3f38d",
+              "leftValue": "={{ ($json.messages[0].text.body || '').trim().toLowerCase() }}   starts with   delete",
+              "rightValue": "delete",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "bc9787d2-9277-417c-abed-bfb9674bf48c",
+      "name": "Is Delete Command",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2544,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const messages = $('WhatsApp Trigger').first().json.messages;\nconst msg = messages && messages[0];\nconst text = (msg && msg.text && msg.text.body) || '';\nconst senderNumber = msg && msg.from;\n\n// Find something that looks like TXN-XXXXXX-XXXX in the message\nconst match = text.match(/TXN-[A-Za-z0-9-]+/i);\nconst transactionId = match ? match[0].toUpperCase() : null;\n\nif (!transactionId) {\n  throw new Error('Delete command mein Transaction ID nahi mili. Sahi format: \"delete TXN-XXXXXX-XXXX\"');\n}\n\nreturn [{\n  json: {\n    transactionId,\n    senderNumber\n  }\n}];\n"
+      },
+      "id": "32fcc1a5-0a8e-46de-8b20-48614a72ee03",
+      "name": "Extract Delete Info",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2368,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 83085190,
+          "mode": "list",
+          "cachedResultName": "Payments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit#gid=83085190"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID",
+              "lookupValue": "={{ $('Extract Delete Info').first().json.transactionId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b7fc1238-db85-463d-8f13-e8cdbb3e2e09",
+      "name": "Find Payment Row",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1984,
+        288
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T6cRdFQeRI4Q89ak",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Expenses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID",
+              "lookupValue": "={{ $('Extract Delete Info').first().json.transactionId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c807965b-58ef-4dd1-93f6-b1026f3c8780",
+      "name": "Find Expense Rows",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2176,
+        288
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T6cRdFQeRI4Q89ak",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const paymentResults = $('Find Payment Row').all();\nconst expenseResults = $input.all();\nconst txnId = $('Extract Delete Info').first().json.transactionId;\nconst senderNumber = $('Extract Delete Info').first().json.senderNumber;\n\nconst paymentRow = paymentResults.find(i => i.json && i.json.row_number);\nconst expenseRows = expenseResults.filter(i => i.json && i.json.row_number);\n\nif (!paymentRow && expenseRows.length === 0) {\n  return [{\n    json: {\n      found: false,\n      transactionId: txnId,\n      senderNumber\n    }\n  }];\n}\n\nconst output = [];\n\n// Sort expense rows highest row number first, so deleting one row doesn't\n// shift the row numbers of the rows still waiting to be deleted.\nconst sortedExpenseRows = [...expenseRows].sort(\n  (a, b) => b.json.row_number - a.json.row_number\n);\n\nfor (const row of sortedExpenseRows) {\n  output.push({\n    json: {\n      sheet: 'expense',\n      row_number: row.json.row_number,\n      person: row.json.Person,\n      amount: row.json.Amount,\n      category: row.json.Category,\n      transactionId: txnId,\n      senderNumber\n    }\n  });\n}\n\nif (paymentRow) {\n  output.push({\n    json: {\n      sheet: 'payment',\n      row_number: paymentRow.json.row_number,\n      totalAmount: paymentRow.json['Total Amount'],\n      paidBy: paymentRow.json['Paid By'],\n      date: paymentRow.json['Date'],\n      category: paymentRow.json['Category'],\n      transactionId: txnId,\n      senderNumber\n    }\n  });\n}\n\nreturn output;\n"
+      },
+      "id": "6018e0ec-97d4-41b6-ad1b-a0649254b41c",
+      "name": "Build Deletion Plan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1776,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "521d68a0-b952-461f-b8d7-6e4fcace36fb",
+              "leftValue": "={{ $json.sheet }}",
+              "rightValue": "",
+              "operator": {
+                "type": "any",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5cb5abcf-5d8e-4342-9968-5f05ffa86467",
+      "name": "Anything To Delete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1568,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { done: true } }];"
+      },
+      "id": "ad1b5510-c09f-4d17-8dcc-6fa58f907ec9",
+      "name": "Finalize Deletion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1226129117243724",
+        "recipientPhoneNumber": "={{ $('Extract Delete Info').first().json.senderNumber }}",
+        "textBody": "=={{\n(() => {\n  const items = $('Build Deletion Plan').all().filter(i => i.json.sheet);\n  const txnId = $('Extract Delete Info').first().json.transactionId;\n  const expenseItems = items.filter(i => i.json.sheet === 'expense');\n  const paymentItem = items.find(i => i.json.sheet === 'payment');\n\n  let msg = `🗑️ *Entry Deleted!*\\n\\n🆔 *Transaction ID:* ${txnId}`;\n\n  if (paymentItem) {\n    msg += `\\n\\n📅 *Date:* ${paymentItem.json.date}\\n🏷️ *Category:* ${paymentItem.json.category}\\n💰 *Total Amount:* ${paymentItem.json.totalAmount}\\n💳 *Paid By:* ${paymentItem.json.paidBy}`;\n  }\n\n  if (expenseItems.length) {\n    const splitsText = expenseItems.map(i => `• ${i.json.person}: ${i.json.amount}`).join('\\n');\n    msg += `\\n\\n👥 *Expense Splits Removed:*\\n${splitsText}`;\n  }\n\n  msg += `\\n\\nYe transaction sab sheets se delete kar di gayi hai.`;\n  return msg;\n})()\n}}",
+        "additionalFields": {}
+      },
+      "id": "0e717da9-b8d0-48d4-af0f-798c0ff93b7c",
+      "name": "Send Delete Confirmation",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        224
+      ],
+      "webhookId": "76116bc5-f8de-453d-9716-75e7e833d960",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "ZcDEsu9RZvqKeqaH",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1226129117243724",
+        "recipientPhoneNumber": "={{ $('Extract Delete Info').first().json.senderNumber }}",
+        "textBody": "=={{\n(() => {\n  const txnId = $('Extract Delete Info').first().json.transactionId;\n  return `❌ *Entry Nahi Mili*\\n\\nTransaction ID *${txnId}* na Expenses aur na Payments sheet mein mili.\\n\\nSahi Transaction ID check karke dubara try karein.`;\n})()\n}}",
+        "additionalFields": {}
+      },
+      "id": "32cac16f-5fba-4276-bde6-ae085402c26a",
+      "name": "Send Not Found Message",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -1312,
+        448
+      ],
+      "webhookId": "e23160db-a838-4153-9c92-42e42c08ba04",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "ZcDEsu9RZvqKeqaH",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "218866fe-3c15-49e8-85aa-c1a4b2b1732f",
+                    "leftValue": "={{ $json.sheet }}",
+                    "rightValue": "expense",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "28ff3b00-a150-4236-90f4-9fd25133d2b9",
+                    "leftValue": "={{ $json.sheet }}",
+                    "rightValue": "payment",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c19ce0ac-827d-48a9-b3b8-ad4a8e2e82ad",
+      "name": "Route By Sheet",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Expenses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit#gid=0"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "id": "b7264f21-8346-4efd-b665-3ea3436d400b",
+      "name": "Delete Expense Rows",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1040,
+        96
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T6cRdFQeRI4Q89ak",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w",
+          "mode": "list",
+          "cachedResultName": "Expense Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 83085190,
+          "mode": "list",
+          "cachedResultName": "Payments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p4CSRNPyrimZZ3F2S5fMLS5uuXLzm3dWtI_N3LeAp-w/edit#gid=83085190"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "id": "aec9c115-ac61-4200-9188-26d812b9fa18",
+      "name": "Delete Payment Row",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1024,
+        416
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T6cRdFQeRI4Q89ak",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "120b48bb-a57b-425d-8a7e-3d6c58f5fbb2",
+      "name": "Merge Deletions",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -784,
+        224
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Is Delete Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Split Into Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Into Rows": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Log Expense to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Payment to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Expense to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Payment to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Delete Command": {
+      "main": [
+        [
+          {
+            "node": "Extract Delete Info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Delete Info": {
+      "main": [
+        [
+          {
+            "node": "Find Expense Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Payment Row": {
+      "main": [
+        [
+          {
+            "node": "Build Deletion Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Expense Rows": {
+      "main": [
+        [
+          {
+            "node": "Find Payment Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Deletion Plan": {
+      "main": [
+        [
+          {
+            "node": "Anything To Delete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anything To Delete?": {
+      "main": [
+        [
+          {
+            "node": "Route By Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Not Found Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalize Deletion": {
+      "main": [
+        [
+          {
+            "node": "Send Delete Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route By Sheet": {
+      "main": [
+        [
+          {
+            "node": "Delete Expense Rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete Payment Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Expense Rows": {
+      "main": [
+        [
+          {
+            "node": "Merge Deletions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Payment Row": {
+      "main": [
+        [
+          {
+            "node": "Merge Deletions",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Deletions": {
+      "main": [
+        [
+          {
+            "node": "Finalize Deletion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "20147804-323b-4852-9c4d-abb7424b1a0a",
+  "meta": {
+    "instanceId": "470d7d9db5984f88a95b09e9c9f7402ceb2d334b95c2fe3fbe4e5e877ebc8c2d"
+  },
+  "nodeGroups": [],
+  "id": "GbcsMNEkhxZbXDZH",
+  "tags": []
+}
