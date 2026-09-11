@@ -34,19 +34,6 @@ The system allows users to record expenses directly through WhatsApp, automatica
 ![WhatsApp Expense Management System Flow Diagram](screenshots/Flowchart.png)
 
 
-## 🛠️ Technologies Used
-
-| Technology              | Purpose                                          |
-| ----------------------- | ------------------------------------------------ |
-| WhatsApp                | User interaction                                 |
-| n8n                     | Workflow automation                              |
-| AI Model                | Message understanding and expense classification |
-| Google Sheets           | Expense and payment database                     |
-| Google Apps Script      | Backend/API for dashboard                        |
-| HTML / CSS / JavaScript | Web dashboard                                    |
-| GitHub                  | Source code and project version control          |
-
-
 ## 📊 Google Sheets Structure
 
 The system uses two main sheets.
@@ -316,7 +303,19 @@ documentation/SYSTEM-DOCUMENTATION.md
 It explains the complete workflow, data structure, transaction processing, dashboard functionality, and deletion system.
 
 ---
+## 🛠️ Technologies Used
 
+| Technology              | Purpose                                          |
+| ----------------------- | ------------------------------------------------ |
+| WhatsApp                | User interaction                                 |
+| n8n                     | Workflow automation                              |
+| AI Model                | Message understanding and expense classification |
+| Google Sheets           | Expense and payment database                     |
+| Google Apps Script      | Backend/API for dashboard                        |
+| HTML / CSS / JavaScript | Web dashboard                                    |
+| GitHub                  | Source code and project version control          |
+
+---
 ## 🎯 Current System Capabilities
 
 The system currently provides:
@@ -357,16 +356,3 @@ Possible future enhancements include:
 
 ---
 
-## 👨‍💻 Project
-
-**WhatsApp Expense Management System**
-
-Built using:
-
-**WhatsApp + n8n + AI + Google Sheets + Google Apps Script + HTML**
-
----
-
-## 📄 License
-
-This project is currently intended for personal/educational use unless a separate license is added to the repository.
