@@ -28,49 +28,11 @@ The system allows users to record expenses directly through WhatsApp, automatica
 * Mobile-friendly dashboard
 * Google Sheets used as the data storage layer
 
----
+  
+## 🔄 System Flow Diagram
 
-## 🏗️ System Architecture
+![WhatsApp Expense Management System Flow Diagram](screenshots/Flowchart.png)
 
-```text
-WhatsApp User
-      │
-      ▼
-WhatsApp Trigger
-      │
-      ▼
-      n8n Workflow
-      │
-      ├── Message Processing
-      │
-      ├── AI Expense Classification
-      │
-      ├── Expense Splitting
-      │
-      ├── Payment Processing
-      │
-      ├── Settlement Processing
-      │
-      └── Transaction Deletion
-      │
-      ▼
-Google Sheets
- ┌───────────────┐
- │   Expenses    │
- └───────────────┘
-        │
- ┌───────────────┐
- │   Payments    │
- └───────────────┘
-        │
-        ▼
-Google Apps Script
-        │
-        ▼
-Web Dashboard
-```
-
----
 
 ## 🛠️ Technologies Used
 
@@ -84,32 +46,6 @@ Web Dashboard
 | HTML / CSS / JavaScript | Web dashboard                                    |
 | GitHub                  | Source code and project version control          |
 
----
-
-## 📁 Project Structure
-
-```text
-WhatsApp-Expense-Management-System/
-│
-├── README.md
-│
-├── n8n/
-│   └── WhatsApp-Expense-Tracker.json
-│
-├── dashboard/
-│   └── index.html
-│
-├── google-apps-script/
-│   └── Code.gs
-│
-├── documentation/
-│   └── SYSTEM-DOCUMENTATION.md
-│
-└── screenshots/
-    └── dashboard.png
-```
-
----
 
 ## 📊 Google Sheets Structure
 
@@ -150,8 +86,6 @@ Description
 Sender Number
 ID
 ```
-
----
 
 ## 🆔 Transaction ID
 
@@ -368,25 +302,6 @@ These functions allow the dashboard to:
 * Calculate totals
 * Calculate balances
 * Delete transactions
-
----
-
-## 🔐 Security
-
-Do **not** commit sensitive credentials or secrets to this repository.
-
-Never upload:
-
-* API keys
-* Access tokens
-* OAuth credentials
-* Webhook secrets
-* Private credentials
-* Passwords
-* Sensitive personal information
-* Private Google Sheet credentials
-
-Use environment variables, n8n credentials, or other secure configuration methods for sensitive information.
 
 ---
 
