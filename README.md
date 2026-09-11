@@ -291,8 +291,6 @@ These functions allow the dashboard to:
 * Delete transactions
 
 ---
-
----
 ## 🛠️ Technologies Used
 
 | Technology              | Purpose                                          |
