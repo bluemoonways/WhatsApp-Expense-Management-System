@@ -323,9 +323,7 @@ The system currently provides:
 * Person-based filtering
 * Expense summaries
 * Category breakdown
-
----
-
+  
 ## 🔮 Future Improvements
 
 Possible future enhancements include:
