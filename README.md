@@ -355,6 +355,17 @@ Possible future enhancements include:
 * Backup and recovery functionality
 
 ---
+## 📖 Documentation
+
+Detailed system documentation is available in:
+
+```text
+documentation/WhatsApp_Expense_Management_ System_Documentation.docx
+```
+
+It explains the complete workflow, data structure, transaction processing, dashboard functionality, and deletion system.
+
+---
 
 ## 📌 Portfolio Implementation
 
