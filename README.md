@@ -285,6 +285,7 @@ The Apps Script acts as the backend for the web dashboard and provides functions
 
 [📥View / Download Sanitized Google Apps Script](./google-apps-script/Code_Sanitized.gs)
 
+Core backend functions for retrieving person-wise data, generating user lists, and deleting transactions by Transaction ID.
 ```text
 getPersonDataPublic()
 getPersonListPublic()
@@ -381,4 +382,4 @@ For custom implementation or commercial use, please <strong>Contact on:</strong>
 
 
 
-**#AI #AIAutomation #n8n #RAG #GoogleGemini #Pinecone #WhatsAppAutomation #LLM #AIEngineering #Automation #bluemoonways**
+**#AI #AIAutomation #n8n #RAG #airtable #Pinecone #WhatsAppAutomation #Qdrant #AIEngineering #CallingAgents #bluemoonways**
