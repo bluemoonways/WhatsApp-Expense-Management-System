@@ -283,7 +283,7 @@ A negative balance indicates that recorded expenses are greater than payments.
 
 The Apps Script acts as the backend for the web dashboard and provides functions for retrieving person-wise data, generating the person list, calculating balances, and deleting transactions by Transaction ID.
 
-[📥View / Download Sanitized Google Apps Script](./google-apps-script/Code_Sanitized.gs)
+[📥View / Download Sanitized Google Apps Script](/Google_Apps_Script_sanitized.gs)
 
 Core backend functions for retrieving person-wise data, generating user lists, and deleting transactions by Transaction ID.
 ```text
