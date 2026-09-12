@@ -377,16 +377,11 @@ The project reflects how modern automation can be applied to improve an existing
 
 ### 📄 Project Documentation
 
-[📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.pdf
-)
-
-### ⚙️ n8n Workflow
+[📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.pdf)
 
 [View / Download Sanitized Workflow](./n8n/WhatsApp_Expense_Tracker_Portfolio_Sanitized.json)
 
-### 🔧 Google Apps Script
-
-[View / Download Sanitized Apps Script](./google-apps-script/Code_Sanitized.gs)
+[View / Download Google Apps Script](./google-apps-script/Code_Sanitized.gs)
 
 The Apps Script acts as the backend for the web dashboard and provides functions for retrieving person-wise data, generating the person list, calculating balances, and deleting transactions by Transaction ID.
 
