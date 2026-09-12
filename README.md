@@ -367,14 +367,6 @@ Possible future enhancements include:
 - Audit logs
 - Backup and recovery functionality
 
-### 🧩 Portfolio Implementation
-
-This project was developed as a **real-world automation solution for an audit team**, transforming a manual Excel-based expense recording process into an AI-powered WhatsApp workflow.
-
-It demonstrates practical implementation of **AI message processing, workflow automation, expense splitting, transaction management, Google Sheets data storage, Google Apps Script backend services, and person-wise web reporting**.
-
-The project reflects how modern automation can be applied to improve an existing operational process rather than being developed only as a theoretical or demo application.
-
 ### 📄 Project Documentation
 
 [📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.pdf)
@@ -391,14 +383,32 @@ The project includes a responsive web dashboard for person-wise expense reportin
 
 > **Live Dashboard:** [🚀 Open Expense Management Dashboard](https://script.google.com/macros/s/AKfycbxKxFNgiNF-rIjOFMBUwp-FWcL_PQ0HeOBbkuBloWc8CXau0tBnspP7fSBoSJtd6FtY/exec)
 
+### 🧩 Portfolio Implementation
 
-## 📞 Contact
+This project was developed as a **real-world automation solution for an audit team**, transforming a manual Excel-based expense recording process into an AI-powered WhatsApp workflow.
+
+It demonstrates practical implementation of **AI message processing, workflow automation, expense splitting, transaction management, Google Sheets data storage, Google Apps Script backend services, and person-wise web reporting**.
+
+The project reflects how modern automation can be applied to improve an existing operational process rather than being developed only as a theoretical or demo application.
+
+## 📞 Contact Me:
 
 **Faheem Abbas**
 
 AI Automation Specialist | n8n Expert | AI Agents | AI-Powered Business Automation | Lead Generation | API Integrations | Calling Agents
 
-For custom implementation or commercial use, please <strong>Contact Me:</strong>
-<a href="https://wa.me/923002120566"><img src="https://raw.githubusercontent.com/bluemoonways/bluemoonways/main/assets/whatsapp-logo.png" width="30" alt="WhatsApp" style="position: relative; top: 2px;"></a>   <a href="https://www.linkedin.com/in/faheem-abbas-ai-automation-specialist/"><img src="https://raw.githubusercontent.com/bluemoonways/bluemoonways/main/assets/linkedin-logo.png" width="30" alt="LinkedIn" style="position: relative; top: 2px;"></a>   <a href="mailto:info.bluemoonways@gmail.com"><img src="https://raw.githubusercontent.com/bluemoonways/bluemoonways/main/assets/gmail-logo.png" width="30" alt="Email" style="position: relative; top: 2px;"></a>
+For custom implementation or commercial use, please <strong>Contact on:</strong>
+<br><br>
+<a href="https://wa.me/923002120566">
+  <img src="https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp">
+</a>
+  <a href="https://www.linkedin.com/in/faheem-abbas-ai-automation-specialist/">
+  <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+</a>
+  <a href="mailto:info.bluemoonways@gmail.com">
+  <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail">
+</a>
+
+
 
 **#AI #AIAutomation #n8n #RAG #GoogleGemini #Pinecone #WhatsAppAutomation #LLM #AIEngineering #Automation #bluemoonways**
