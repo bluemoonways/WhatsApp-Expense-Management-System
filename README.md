@@ -391,7 +391,8 @@ For GitHub/portfolio use, the shared workflow and Apps Script have been sanitize
 
 ### 📄 Project Documentation
 
-[📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.docx)
+[📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.pdf
+)
 
 ### ⚙️ n8n Workflow
 
