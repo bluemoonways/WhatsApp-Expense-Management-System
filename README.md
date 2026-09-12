@@ -367,7 +367,7 @@ Possible future enhancements include:
 - Audit logs
 - Backup and recovery functionality
 
-## 🧩 Portfolio Implementation
+### 🧩 Portfolio Implementation
 
 This project was developed as a **real-world automation solution for an audit team**, transforming a manual Excel-based expense recording process into an AI-powered WhatsApp workflow.
 
@@ -375,46 +375,29 @@ It demonstrates practical implementation of **AI message processing, workflow au
 
 The project reflects how modern automation can be applied to improve an existing operational process rather than being developed only as a theoretical or demo application.
 
-### 🔐 Portfolio-Safe Source Files
-
-For GitHub/portfolio use, the shared workflow and Apps Script have been sanitized. Private credentials, connection identifiers, webhook identifiers, and live spreadsheet configuration are replaced with placeholders.
-
-### 📦 Project Files
-
-| File | Description |
-|---|---|
-| `n8n/WhatsApp_Expense_Tracker_Portfolio_Sanitized.json` | Sanitized n8n automation workflow |
-| `google-apps-script/Code_Sanitized.gs` | Sanitized Google Apps Script backend |
-| `dashboard/index.html` | Responsive web dashboard |
-| `screenshots/Flowchart.png` | System architecture and workflow diagram |
-| `WhatsApp_Expense_Management_System_Documentation.docx` | Detailed system documentation |
-
-### 📄 Project Documentation
+## 📄 Project Documentation
 
 [📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.pdf
 )
 
-### ⚙️ n8n Workflow
+## ⚙️ n8n Workflow
 
 [View / Download Sanitized Workflow](./n8n/WhatsApp_Expense_Tracker_Portfolio_Sanitized.json)
 
-### 🔧 Google Apps Script
+## 🔧 Google Apps Script
 
 [View / Download Sanitized Apps Script](./google-apps-script/Code_Sanitized.gs)
 
 The Apps Script acts as the backend for the web dashboard and provides functions for retrieving person-wise data, generating the person list, calculating balances, and deleting transactions by Transaction ID.
 
-### 🌐 Web Dashboard
+## 🌐 Web Dashboard
 
 The project includes a responsive web dashboard for person-wise expense reporting, summaries, category breakdowns, recent transactions, and transaction deletion.
 
 > **Live Dashboard:** [🚀 Open Expense Management Dashboard](https://script.google.com/macros/s/AKfycbxKxFNgiNF-rIjOFMBUwp-FWcL_PQ0HeOBbkuBloWc8CXau0tBnspP7fSBoSJtd6FtY/exec)
 
-### 🔒 Security Note
 
-The GitHub version is intended for portfolio demonstration. Do not publish real WhatsApp credentials, AI/API keys, Google OAuth credentials, webhook secrets, spreadsheet IDs, or private business data. Configure your own credentials and environment-specific values when deploying the workflow.
-
-## 👨‍💻 Author
+## 📞 Contact
 
 **Faheem Abbas**
 
