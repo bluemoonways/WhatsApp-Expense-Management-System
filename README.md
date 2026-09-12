@@ -222,7 +222,9 @@ Expense rows are processed from the bottom upward to prevent row-number shifting
 
 ## 📱 Web Dashboard
 
-The project includes a responsive web dashboard built using HTML, CSS, JavaScript, and Google Apps Script.
+The project includes a responsive web dashboard built using HTML, CSS, JavaScript, and Google Apps Script. It is used for person-wise expense reporting, summaries, category breakdowns, recent transactions, and transaction deletion.
+
+> **Live Dashboard:** [🚀 Open Expense Management Dashboard](https://script.google.com/macros/s/AKfycbxKxFNgiNF-rIjOFMBUwp-FWcL_PQ0HeOBbkuBloWc8CXau0tBnspP7fSBoSJtd6FtY/exec)
 
 The dashboard provides:
 
@@ -276,33 +278,12 @@ A positive balance indicates that payments are greater than recorded expenses.
 
 A negative balance indicates that recorded expenses are greater than payments.
 
-## 🔄 Transaction Flow
-
-A normal expense follows this flow:
-
-```text
-WhatsApp Message
-       ↓
-WhatsApp Trigger
-       ↓
-AI Message Processing
-       ↓
-Expense Classification
-       ↓
-Expense Splitting
-       ↓
-Transaction ID Generation
-       ↓
-Google Sheets
-       ↓
-WhatsApp Confirmation
-```
-
-The dashboard then reads the stored data through Google Apps Script.
 
 ## 🔧 Google Apps Script
 
-The Apps Script backend provides functions for the dashboard, including:
+The Apps Script acts as the backend for the web dashboard and provides functions for retrieving person-wise data, generating the person list, calculating balances, and deleting transactions by Transaction ID.
+
+[📥View / Download Sanitized Google Apps Script](./google-apps-script/Code_Sanitized.gs)
 
 ```text
 getPersonDataPublic()
@@ -367,22 +348,6 @@ Possible future enhancements include:
 - Audit logs
 - Backup and recovery functionality
 
-### 📄 Project Documentation
-
-[📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.pdf)
-
-[📥View / Download Sanitized Workflow](./n8n/WhatsApp_Expense_Tracker_Portfolio_Sanitized.json)
-
-[📥View / Download Sanitized Google Apps Script](./google-apps-script/Code_Sanitized.gs)
-
-The Apps Script acts as the backend for the web dashboard and provides functions for retrieving person-wise data, generating the person list, calculating balances, and deleting transactions by Transaction ID.
-
-### 🌐 Web Dashboard
-
-The project includes a responsive web dashboard for person-wise expense reporting, summaries, category breakdowns, recent transactions, and transaction deletion.
-
-> **Live Dashboard:** [🚀 Open Expense Management Dashboard](https://script.google.com/macros/s/AKfycbxKxFNgiNF-rIjOFMBUwp-FWcL_PQ0HeOBbkuBloWc8CXau0tBnspP7fSBoSJtd6FtY/exec)
-
 ### 🧩 Portfolio Implementation
 
 This project was developed as a **real-world automation solution for an audit team**, transforming a manual Excel-based expense recording process into an AI-powered WhatsApp workflow.
@@ -390,6 +355,11 @@ This project was developed as a **real-world automation solution for an audit te
 It demonstrates practical implementation of **AI message processing, workflow automation, expense splitting, transaction management, Google Sheets data storage, Google Apps Script backend services, and person-wise web reporting**.
 
 The project reflects how modern automation can be applied to improve an existing operational process rather than being developed only as a theoretical or demo application.
+
+[📥 Download System Documentation](./WhatsApp_Expense_Management_System_Documentation.pdf)
+
+[📥View / Download Sanitized Workflow](./n8n/WhatsApp_Expense_Tracker_Portfolio_Sanitized.json)
+
 
 ## 📞 Contact Me:
 
